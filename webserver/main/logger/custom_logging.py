@@ -3,7 +3,7 @@ import sys
 
 #logger.basicConfig()
 root = logging.getLogger()
-root.setLevel(logging.INFO)
+root.setLevel(logging.DEBUG)
 root.propagate = False
 
 handler = logging.StreamHandler(sys.stdout)

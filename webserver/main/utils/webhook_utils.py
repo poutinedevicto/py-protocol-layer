@@ -66,10 +66,18 @@ def post_count_response_to_client(route, schema_version, payload):
 
 @MeasureTime
 def post_on_bg_or_bpp(url, payload, headers={}):
-    log(f"Making POST call for {payload['context']['message_id']} on {url}")
+
+    # LOCAVORA_CHANGE
+    log(f"Making POST call for {payload} on {url}")
+    #WAS
+    #log(f"Making POST call for {payload['context']['message_id']} on {url}")
     headers.update({'Content-Type': 'application/json'})
     raw_data = json.dumps(payload, separators=(',', ':'))
     response_text, status_code = requests_post(url, raw_data, headers=headers)
+
+    # LOCAVORA_CHANGE
+    log(f"Got response to POST for {payload['context']['message_id']} on {url}")
+
     log(f"Request Status: {status_code}, {response_text}")
     return json.loads(response_text), status_code
 

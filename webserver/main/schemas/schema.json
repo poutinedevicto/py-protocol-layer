@@ -2533,34 +2533,34 @@
         "description": "Describes a Seller App catalog",
         "type": "object",
         "properties": {
-          "bpp/descriptor": {
+          "descriptor": {
             "$ref": "#/components/schemas/Descriptor"
           },
-          "bpp/categories": {
+          "categories": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Category"
             }
           },
-          "bpp/fulfillments": {
+          "fulfillments": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Fulfillment"
             }
           },
-          "bpp/payments": {
+          "payments": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Payment"
             }
           },
-          "bpp/offers": {
+          "offers": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Offer"
             }
           },
-          "bpp/providers": {
+          "providers": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Provider"
@@ -2584,7 +2584,7 @@
           }
         },
         "required": [
-          "bpp/providers"
+          "providers"
         ]
       },
       "Category": {
@@ -2700,6 +2700,10 @@
             "type": "string",
             "description": "Version of ONDC core API specification being used"
           },
+          "version": {
+            "type": "string",
+            "description": "LOCAVORA - remplace core_version depuis core version 1.0. Version of ONDC core API specification being used"
+          },
           "bap_id": {
             "type": "string",
             "format": "uri",
@@ -2747,7 +2751,6 @@
           "action",
           "country",
           "city",
-          "core_version",
           "transaction_id",
           "message_id",
           "bap_id",
@@ -2850,7 +2853,8 @@
         "type": "string",
         "enum": [
           "nic2004:52110",
-          "nic2021:52110"
+          "nic2021:52110",
+          "retail:1.1.0"
         ]
       },
       "Duration": {
@@ -3088,8 +3092,35 @@
         "pattern": "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$"
       },
       "Image": {
-        "description": "Image of an object. <br/><br/> A url based image will look like <br/><br/>```uri:http://path/to/image``` <br/><br/> An image can also be sent as a data string. For example : <br/><br/> ```data:js87y34ilhriuho84r3i4```",
-        "type": "string"
+	  "description": "Describes an image",
+	  "type": "object",
+	  "properties": {
+	    "url": {
+	      "description": "URL to the image. This can be a data url or an remote url",
+	      "type": "string",
+	      "format": "uri"
+	    },
+	    "size_type": {
+	      "description": "The size of the image. The network policy can define the default dimensions of each type",
+	      "type": "string",
+	      "enum": [
+		"xs",
+		"sm",
+		"md",
+		"lg",
+		"xl",
+		"custom"
+	      ]
+	    },
+	    "width": {
+	      "description": "Width of the image in pixels",
+	      "type": "string"
+	    },
+	    "height": {
+	      "description": "Height of the image in pixels",
+	      "type": "string"
+	    }
+	  }
       },
       "Intent": {
         "description": "Intent of a user. Used for searching for services. Buyer App can set finder fee type in payment.\"./ondc-buyer_app_finder_fee_type\" and amount in \"./ondc-buyer_app_finder_fee_amount\"",
