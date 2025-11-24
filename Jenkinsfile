@@ -37,32 +37,40 @@ spec:
     IMAGE_REGISTRY_CREDS=credentials('harbor-locavora-readwrite')
   }
   stages {
+    // LOCAVORA DELETE_ME - Dockerfile is a subdir - using cd "" && 
+    // stage('Buildah build using webserver subdirectory') {
+    //   steps {
+    //       dir('webserver') { 
+    //           echo "Changed directory to webserver"
+    //       }
+    //   }
+    // }
     stage('Build with Buildah using Dockerfile in provided repo') {
       steps {
         container('buildah') {
-          sh 'STORAGE_DRIVER=vfs buildah build -t harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:0.1 .'
+          sh 'cd webserver && STORAGE_DRIVER=vfs buildah build -t harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:0.1 .'
         }
       }
     }
     stage('Login to Harbor registry') {
       steps {
         container('buildah') {
-          sh 'echo $IMAGE_REGISTRY_CREDS_PSW | STORAGE_DRIVER=vfs buildah login -u $IMAGE_REGISTRY_CREDS_USR --password-stdin harbor.beckn.locavora.org'
+          sh 'cd webserver && (echo $IMAGE_REGISTRY_CREDS_PSW | STORAGE_DRIVER=vfs buildah login -u $IMAGE_REGISTRY_CREDS_USR --password-stdin harbor.beckn.locavora.org)'
         }
       }
     }
     stage('tag image') {
       steps {
         container('buildah') {
-          sh 'STORAGE_DRIVER=vfs buildah tag harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:0.1 harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:latest'
+          sh 'cd webserver && STORAGE_DRIVER=vfs buildah tag harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:0.1 harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:latest'
         }
       }
     }
     stage('push image') {
       steps {
         container('buildah') {
-          sh 'STORAGE_DRIVER=vfs buildah push harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:0.1'
-          sh 'STORAGE_DRIVER=vfs buildah push harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:latest'
+          sh 'cd webserver && STORAGE_DRIVER=vfs buildah push harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:0.1'
+          sh 'cd webserver && STORAGE_DRIVER=vfs buildah push harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:latest'
         }
       }
     }
