@@ -1,6 +1,6 @@
 
-def REGISTRY_NAME = "harbor.beckn.locavora.org"
-def IMAGE_NAME = "locavora-public/ondc-buyer-app-py-protocol"
+def REGISTRY_NAME = 'harbor.beckn.locavora.org'
+def IMAGE_NAME = 'locavora-public/ondc-buyer-app-py-protocol'
 
 pipeline {
   agent {
@@ -56,7 +56,7 @@ spec:
     stage('Build with Buildah using Dockerfile in provided repo') {
       steps {
         container('buildah') {
-          sh 'cd webserver && STORAGE_DRIVER=vfs buildah build -t ${REGISTRY_NAME}/${IMAGE_NAME}:0.1 .'
+          sh "cd webserver && STORAGE_DRIVER=vfs buildah build -t ${REGISTRY_NAME}/${IMAGE_NAME}:0.1 ."
         }
       }
     }
