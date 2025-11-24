@@ -53,6 +53,9 @@ spec:
     //       }
     //   }
     // }
+
+    // LOCAVORA - attention on doit utiliser les guillements doubles "" pour que les variables d'environnement soient interprétées
+
     stage('Build with Buildah using Dockerfile in provided repo') {
       steps {
         container('buildah') {
@@ -63,22 +66,22 @@ spec:
     stage('Login to Harbor registry') {
       steps {
         container('buildah') {
-          sh 'cd webserver && (echo $IMAGE_REGISTRY_CREDS_PSW | STORAGE_DRIVER=vfs buildah login -u $IMAGE_REGISTRY_CREDS_USR --password-stdin ${REGISTRY_NAME})'
+          sh "echo $IMAGE_REGISTRY_CREDS_PSW | STORAGE_DRIVER=vfs buildah login -u $IMAGE_REGISTRY_CREDS_USR --password-stdin ${REGISTRY_NAME}"
         }
       }
     }
     stage('tag image') {
       steps {
         container('buildah') {
-          sh 'cd webserver && STORAGE_DRIVER=vfs buildah tag ${REGISTRY_NAME}/${IMAGE_NAME}:0.1 ${REGISTRY_NAME}/${IMAGE_NAME}:latest'
+          sh "STORAGE_DRIVER=vfs buildah tag ${REGISTRY_NAME}/${IMAGE_NAME}:0.1 ${REGISTRY_NAME}/${IMAGE_NAME}:latest"
         }
       }
     }
     stage('push image') {
       steps {
         container('buildah') {
-          sh 'cd webserver && STORAGE_DRIVER=vfs buildah push ${REGISTRY_NAME}/${IMAGE_NAME}:0.1'
-          sh 'cd webserver && STORAGE_DRIVER=vfs buildah push ${REGISTRY_NAME}/${IMAGE_NAME}:latest'
+          sh "STORAGE_DRIVER=vfs buildah push ${REGISTRY_NAME}/${IMAGE_NAME}:0.1"
+          sh "STORAGE_DRIVER=vfs buildah push ${REGISTRY_NAME}/${IMAGE_NAME}:latest"
         }
       }
     }
@@ -86,7 +89,7 @@ spec:
   post {
     always {
       container('buildah') {
-        sh 'STORAGE_DRIVER=vfs buildah logout ${REGISTRY_NAME}'
+        sh "STORAGE_DRIVER=vfs buildah logout ${REGISTRY_NAME}"
       }
     }
   }
