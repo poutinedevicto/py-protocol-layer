@@ -51,7 +51,7 @@ spec:
     stage('Build with Buildah using Dockerfile in provided repo') {
       steps {
         container('buildah') {
-          sh 'cd webserver && STORAGE_DRIVER=vfs buildah build -t harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:0.1 .'
+          sh 'cd webserver && STORAGE_DRIVER=vfs buildah build -t harbor.beckn.locavora.org/locavora-public/ondc-buyer-app-py-protocol:0.1 .'
         }
       }
     }
@@ -65,15 +65,15 @@ spec:
     stage('tag image') {
       steps {
         container('buildah') {
-          sh 'cd webserver && STORAGE_DRIVER=vfs buildah tag harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:0.1 harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:latest'
+          sh 'cd webserver && STORAGE_DRIVER=vfs buildah tag harbor.beckn.locavora.org/locavora-public/ondc-buyer-app-py-protocol:0.1 harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:latest'
         }
       }
     }
     stage('push image') {
       steps {
         container('buildah') {
-          sh 'cd webserver && STORAGE_DRIVER=vfs buildah push harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:0.1'
-          sh 'cd webserver && STORAGE_DRIVER=vfs buildah push harbor.beckn.locavora.org/locavora/ondc-buyer-app-py-protocol:latest'
+          sh 'cd webserver && STORAGE_DRIVER=vfs buildah push harbor.beckn.locavora.org/locavora-public/ondc-buyer-app-py-protocol:0.1'
+          sh 'cd webserver && STORAGE_DRIVER=vfs buildah push harbor.beckn.locavora.org/locavora-public/ondc-buyer-app-py-protocol:latest'
         }
       }
     }
