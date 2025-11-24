@@ -20,7 +20,7 @@ spec:
       privileged: true
     resources:
       requests:
-        ephemeral-storage: 2Gi
+        ephemeral-storage: 4Gi
     volumeMounts:
       - name: varlibcontainers
         mountPath: /var/lib/containers
