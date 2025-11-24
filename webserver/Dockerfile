@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # LOCAVORA was
 # RUN apt-get update --fix-missing && apt-get install -y  python3.7 python3.7-dev python3-pip python3.7-venv supervisor virtualenv libpq-dev cargo build-essential libssl-dev libffi-dev
+RUN apt-get install -y python3-pip python3.7-venv virtualenv
 
 RUN mkdir -p /dataorc/app
 # update pip
