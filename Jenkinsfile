@@ -1,3 +1,7 @@
+
+def REGISTRY_NAME = "harbor.beckn.locavora.org"
+def IMAGE_NAME = "locavora-public/ondc-buyer-app-py-protocol"
+
 pipeline {
   agent {
     // LOCAVORA_TODO buildah agent also defined in beckn-registry Jenkinsfile 
@@ -40,10 +44,7 @@ spec:
     IMAGE_REGISTRY_CREDS=credentials('harbor-locavora-readwrite')
   }
   stages {
-    
-    def REGISTRY_NAME = "harbor.beckn.locavora.org"
-    def IMAGE_NAME = "locavora-public/ondc-buyer-app-py-protocol"
-
+  
     // LOCAVORA DELETE_ME - Dockerfile is a subdir - using cd "" && 
     // stage('Buildah build using webserver subdirectory') {
     //   steps {
