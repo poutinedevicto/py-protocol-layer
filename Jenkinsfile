@@ -1,7 +1,3 @@
-
-def REGISTRY_NAME = 'harbor.beckn.locavora.org'
-def IMAGE_NAME = 'locavora-public/ondc-buyer-app-py-protocol'
-
 pipeline {
   agent {
     // LOCAVORA_TODO buildah agent also defined in beckn-registry Jenkinsfile 
@@ -42,6 +38,8 @@ spec:
   environment {
     // Jenkins UI -> Manage Jenkins -> Credentials
     IMAGE_REGISTRY_CREDS=credentials('harbor-locavora-readwrite')
+    REGISTRY_NAME = 'harbor.beckn.locavora.org'
+    IMAGE_NAME = 'locavora-public/ondc-buyer-app-py-protocol'
   }
   stages {
   
@@ -54,34 +52,36 @@ spec:
     //   }
     // }
 
-    // LOCAVORA - attention on doit utiliser les guillements doubles "" pour que les variables d'environnement soient interprétées
-
+    // LOCAVORA - attention on doit utiliser les apos (') pour que les variables d'environnement ne soient pas interprétées
+    //  Warning: A secret was passed to "sh" using Groovy String interpolation, which is insecure.
+		//  Affected argument(s) used the following variable(s): [xxx]
+	  //  See https://jenkins.io/redirect/groovy-string-interpolation for details.
     stage('Build with Buildah using Dockerfile in provided repo') {
       steps {
         container('buildah') {
-          sh "cd webserver && STORAGE_DRIVER=vfs buildah build -t ${REGISTRY_NAME}/${IMAGE_NAME}:0.1 ."
+          sh 'cd webserver && STORAGE_DRIVER=vfs buildah build -t $REGISTRY_NAME/$IMAGE_NAME:0.1 .'
         }
       }
     }
     stage('Login to Harbor registry') {
       steps {
         container('buildah') {
-          sh "echo $IMAGE_REGISTRY_CREDS_PSW | STORAGE_DRIVER=vfs buildah login -u $IMAGE_REGISTRY_CREDS_USR --password-stdin ${REGISTRY_NAME}"
+          sh 'echo $IMAGE_REGISTRY_CREDS_PSW | STORAGE_DRIVER=vfs buildah login -u $IMAGE_REGISTRY_CREDS_USR --password-stdin $REGISTRY_NAME'
         }
       }
     }
     stage('tag image') {
       steps {
         container('buildah') {
-          sh "STORAGE_DRIVER=vfs buildah tag ${REGISTRY_NAME}/${IMAGE_NAME}:0.1 ${REGISTRY_NAME}/${IMAGE_NAME}:latest"
+          sh 'STORAGE_DRIVER=vfs buildah tag $REGISTRY_NAME/$IMAGE_NAME:0.1 $REGISTRY_NAME/$IMAGE_NAME:latest'
         }
       }
     }
     stage('push image') {
       steps {
         container('buildah') {
-          sh "STORAGE_DRIVER=vfs buildah push ${REGISTRY_NAME}/${IMAGE_NAME}:0.1"
-          sh "STORAGE_DRIVER=vfs buildah push ${REGISTRY_NAME}/${IMAGE_NAME}:latest"
+          sh 'STORAGE_DRIVER=vfs buildah push $REGISTRY_NAME/$IMAGE_NAME:0.1'
+          sh 'STORAGE_DRIVER=vfs buildah push $REGISTRY_NAME/$IMAGE_NAME:latest'
         }
       }
     }
@@ -89,7 +89,7 @@ spec:
   post {
     always {
       container('buildah') {
-        sh "STORAGE_DRIVER=vfs buildah logout ${REGISTRY_NAME}"
+        sh 'STORAGE_DRIVER=vfs buildah logout $REGISTRY_NAME'
       }
     }
   }
