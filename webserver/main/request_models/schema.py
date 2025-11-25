@@ -1761,22 +1761,23 @@ class ResolutionProviderRespondentInfo(BaseModel):
 
 
 class Catalog(BaseModel):
-    bpp_descriptor: BppDescriptor = Field(None, alias='bpp/descriptor')
+    # LOCAVORA CHANGE was bpp/descriptor, bpp/fulfillments, etc
+    bpp_descriptor: BppDescriptor = Field(None, alias='descriptor')
     bpp_fulfillments: Optional[List[BppFulfillment]] = Field(
-        None, alias='bpp/fulfillments'
+        None, alias='fulfillments'
     )
-    bpp_providers: List[OnSearchProvider] = Field(..., alias='bpp/providers', min_items=1)
+    bpp_providers: List[OnSearchProvider] = Field(..., alias='providers', min_items=1)
 
 
 class IncrCatalog(BaseModel):
-    bpp_descriptor: Optional[Descriptor] = Field(None, alias='bpp/descriptor')
-    bpp_categories: Optional[List[Category]] = Field(None, alias='bpp/categories')
+    bpp_descriptor: Optional[Descriptor] = Field(None, alias='descriptor')
+    bpp_categories: Optional[List[Category]] = Field(None, alias='categories')
     bpp_fulfillments: Optional[List[Fulfillment]] = Field(
-        None, alias='bpp/fulfillments'
+        None, alias='fulfillments'
     )
-    bpp_payments: Optional[List[Payment]] = Field(None, alias='bpp/payments')
-    bpp_offers: Optional[List[Offer]] = Field(None, alias='bpp/offers')
-    bpp_providers: List[IncrOnSearchProvider] = Field(..., alias='bpp/providers', min_items=1)
+    bpp_payments: Optional[List[Payment]] = Field(None, alias='payments')
+    bpp_offers: Optional[List[Offer]] = Field(None, alias='offers')
+    bpp_providers: List[IncrOnSearchProvider] = Field(..., alias='providers', min_items=1)
     exp: Optional[datetime] = Field(
         None, description='Time after which catalog has to be refreshed'
     )

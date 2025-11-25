@@ -41,11 +41,12 @@ def validate_search_request_validity(payload):
 def validate_on_search_provider_is_unique(payload):
     context = payload["context"]
     collection = get_mongo_collection("on_search_dump")
-    provider_ids = [p["id"] for p in payload["message"]["catalog"]["bpp/providers"]]
+    # LOCAVORA CHANGE was bpp/providers
+    provider_ids = [p["id"] for p in payload["message"]["catalog"]["providers"]]
     filter_criteria = {"context.domain": context["domain"],
                        "context.bpp_id": context["bpp_id"],
                        "context.transaction_id": context["transaction_id"],
-                       "message.catalog.bpp/providers.id": {"$in": provider_ids}
+                       "message.catalog.providers.id": {"$in": provider_ids}
                        }
     on_search_request = collection_find_one(collection, filter_criteria, keep_created_at=False)
     if on_search_request:
@@ -57,7 +58,8 @@ def validate_on_search_provider_is_unique(payload):
 def validate_city_code_with_pin_code_in_locations(payload):
     sheet_link = "https://docs.google.com/spreadsheets/d/12A_B-nDtvxyFh_FWDfp85ss2qpb65kZ7"
     city_code = payload["context"]["city"]
-    providers = payload["message"]["catalog"]["bpp/providers"]
+    # LOCAVORA CHANGE was bpp/providers
+    providers = payload["message"]["catalog"]["providers"]
     area_codes = []
     for p in providers:
         locations = p["locations"]
