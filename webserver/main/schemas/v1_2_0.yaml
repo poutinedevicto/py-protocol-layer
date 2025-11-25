@@ -1630,25 +1630,26 @@ components:
       description: Describes a Seller App catalog
       type: object
       properties:
-        bpp/descriptor:
+        # LOCAVORA was bpp/descriptor bpp/categories et al
+        descriptor:
           "$ref": "#/components/schemas/Descriptor"
-        bpp/categories:
+        categories:
           type: array
           items:
             "$ref": "#/components/schemas/Category"
-        bpp/fulfillments:
+        fulfillments:
           type: array
           items:
             "$ref": "#/components/schemas/Fulfillment"
-        bpp/payments:
+        payments:
           type: array
           items:
             "$ref": "#/components/schemas/Payment"
-        bpp/offers:
+        offers:
           type: array
           items:
             "$ref": "#/components/schemas/Offer"
-        bpp/providers:
+        providers:
           type: array
           items:
             "$ref": "#/components/schemas/Provider"
@@ -1667,7 +1668,7 @@ components:
           description: Time after which catalog has to be refreshed
           format: date-time
       required:
-        - bpp/providers
+        - providers
     Category:
       description: Describes a category
       type: object

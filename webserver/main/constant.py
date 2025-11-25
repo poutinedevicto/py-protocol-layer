@@ -2,6 +2,7 @@ CONTEXT = 'context'
 MESSAGE = 'message'
 CATALOG = 'catalog'
 BPP_DESCRIPTOR = 'descriptor'
+# LOCAVORA CHANGE was bpp/providers
 BPP_PROVIDERS = 'providers'
 BPP_FULFILLMENTS = 'fulfillments'
 BPP_CATEGORIES = 'categories'
