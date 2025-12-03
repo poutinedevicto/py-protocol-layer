@@ -1051,17 +1051,19 @@ class Descriptor(BaseModel):
 
 
 class BppDescriptor(BaseModel):
+    # LOCAVORA CHANGE - symbol/short_desc/long_desc made optional (as per Beckn spec)
     name: str
     code: Optional[str] = None
-    symbol: str
-    short_desc: str
-    long_desc: str
+    symbol: Optional[str] = None
+    short_desc: Optional[str] = None
+    long_desc: Optional[str] = None
     additional_desc: Optional[DescriptorAdditionalDesc] = None
     media: Optional[List[MediaFile]] = None
     images: List[Image] = []
     audio: Optional[AnyUrl] = None
     field_3d_render: Optional[AnyUrl] = Field(None, alias='3d_render')
-    tags: List[Tag] = []
+    # LOCAVORA CHANGE - tags made optional (as per Beckn spec)
+    tags: Optional[List[Tag]] = []
 
 
 class Descriptor2(Descriptor):
