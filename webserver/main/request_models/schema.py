@@ -1345,10 +1345,11 @@ class Policy(BaseModel):
 
 class OnSearchLocation(Location):
     id: StrictStr
-    gps: Gps
-    address: Address
+    # LOCAVORA CHANGE - not required as per v1_2_0.yaml (a ce que j'ai vu)
+    gps: Optional[Gps] = None    
+    address: Optional[Address] = None
     rateable: Optional[Rateable] = None
-    time: LocationTime
+    time: Optional[LocationTime] = None
     circle: Optional[OnSearchCircle] = None
 
 
@@ -1359,9 +1360,10 @@ class Item2(Item):
 
 class OnSearchItem(Item):
     category_id: IdModel
-    quantity: ItemQuantity
+    # LOCAVORA CHANGE - not required as per v1_2_0.yaml
+    quantity: Optional[ItemQuantity] = None
     descriptor: ItemDescriptor
-    price: Price
+    price: Optional[Price] = None
     tags: Optional[List[Tag]] = [] #TODO - Make tags mandatory except for Grocery(RET10)
 
 
@@ -1622,7 +1624,9 @@ class Fulfillment(BaseModel):
 
 
 class BppFulfillment(Fulfillment):
-    id: StrictStr
+    # LOCAVORA CHANGE - schema v1_2_0.yaml no required field for Fulfillment  
+    # WAS id: StrictStr
+    id: Optional[StrictStr] = None
     type: Type2
 
 
@@ -1684,7 +1688,8 @@ class OnSearchProvider(BaseModel):
     id: StrictStr = Field(..., description='Id of the provider')
     descriptor: Descriptor
     rating: Optional[ValueModel] = None
-    time: Time
+    # LOCAVORA CHANGE - not required as per v1_2_0.yaml
+    time: Optional[Time] = None
     categories: Optional[List[Category]] = None
     fulfillments: List[ProviderFulfillment] = []
     locations: List[OnSearchLocation] = Field([], description='Location List', min_items=1)
@@ -1694,7 +1699,8 @@ class OnSearchProvider(BaseModel):
         None, description='Time after which catalog has to be refreshed'
     )
     rateable: Optional[Rateable] = None
-    tags: List[Tag]
+    # LOCAVORA CHANGE - not required as per v1_2_0.yaml
+    tags: Optional[List[Tag]] = []
 
 
 class IncrOnSearchProvider(BaseModel):
