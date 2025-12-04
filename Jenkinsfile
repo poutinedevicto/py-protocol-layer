@@ -59,29 +59,30 @@ spec:
     stage('Build with Buildah using Dockerfile in provided repo') {
       steps {
         container('buildah') {
-          sh 'cd webserver && STORAGE_DRIVER=vfs buildah build -t $REGISTRY_NAME/$IMAGE_NAME:0.1 .'
+          // LOCAVORA - STORAGE_DRIVER=vfs needed if fuse not supported in kernel (lsmod | grep fuse)
+          sh 'cd webserver && buildah build -t $REGISTRY_NAME/$IMAGE_NAME:0.1 .'
         }
       }
     }
     stage('Login to Harbor registry') {
       steps {
         container('buildah') {
-          sh 'echo $IMAGE_REGISTRY_CREDS_PSW | STORAGE_DRIVER=vfs buildah login -u $IMAGE_REGISTRY_CREDS_USR --password-stdin $REGISTRY_NAME'
+          sh 'echo $IMAGE_REGISTRY_CREDS_PSW | buildah login -u $IMAGE_REGISTRY_CREDS_USR --password-stdin $REGISTRY_NAME'
         }
       }
     }
     stage('tag image') {
       steps {
         container('buildah') {
-          sh 'STORAGE_DRIVER=vfs buildah tag $REGISTRY_NAME/$IMAGE_NAME:0.1 $REGISTRY_NAME/$IMAGE_NAME:latest'
+          sh 'buildah tag $REGISTRY_NAME/$IMAGE_NAME:0.1 $REGISTRY_NAME/$IMAGE_NAME:latest'
         }
       }
     }
     stage('push image') {
       steps {
         container('buildah') {
-          sh 'STORAGE_DRIVER=vfs buildah push $REGISTRY_NAME/$IMAGE_NAME:0.1'
-          sh 'STORAGE_DRIVER=vfs buildah push $REGISTRY_NAME/$IMAGE_NAME:latest'
+          sh 'buildah push $REGISTRY_NAME/$IMAGE_NAME:0.1'
+          sh 'buildah push $REGISTRY_NAME/$IMAGE_NAME:latest'
         }
       }
     }
@@ -89,7 +90,7 @@ spec:
   post {
     always {
       container('buildah') {
-        sh 'STORAGE_DRIVER=vfs buildah logout $REGISTRY_NAME'
+        sh 'buildah logout $REGISTRY_NAME'
       }
     }
   }
