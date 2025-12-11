@@ -60,7 +60,7 @@ spec:
       steps {
         container('buildah') {
           // LOCAVORA - STORAGE_DRIVER=vfs needed if fuse not supported in kernel (lsmod | grep fuse)
-          sh 'cd webserver && buildah build -t $REGISTRY_NAME/$IMAGE_NAME:0.1 .'
+          sh 'cd webserver && buildah build --layers -t $REGISTRY_NAME/$IMAGE_NAME:0.1 .'
         }
       }
     }
