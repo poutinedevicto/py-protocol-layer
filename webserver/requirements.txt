@@ -61,7 +61,8 @@ cachetools==4.2.1
 pdfkit==0.6.1
 stringcase==1.2.0
 Flask-Cors==3.0.10
-twilio==7.0.0
+# LOCAVORA
+#twilio==7.0.0
 SQLAlchemy-serializer==1.4.1
 stringcase==1.2.0
 xlrd==2.0.1
