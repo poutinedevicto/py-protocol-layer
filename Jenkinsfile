@@ -40,6 +40,7 @@ spec:
     IMAGE_REGISTRY_CREDS=credentials('harbor-locavora-readwrite')
     REGISTRY_NAME = 'harbor.beckn.locavora.org'
     IMAGE_NAME = 'locavora-public/ondc-buyer-app-py-protocol'
+    CACHE_NAME = 'locavora/dockerfile-build-cache'
   }
   stages {
   
@@ -56,18 +57,22 @@ spec:
     //  Warning: A secret was passed to "sh" using Groovy String interpolation, which is insecure.
 		//  Affected argument(s) used the following variable(s): [xxx]
 	  //  See https://jenkins.io/redirect/groovy-string-interpolation for details.
-    stage('Build with Buildah using Dockerfile in provided repo') {
-      steps {
-        container('buildah') {
-          // LOCAVORA - STORAGE_DRIVER=vfs needed if fuse not supported in kernel (lsmod | grep fuse)
-          sh 'cd webserver && nice buildah build --layers -t $REGISTRY_NAME/$IMAGE_NAME:0.1 .'
-        }
-      }
-    }
     stage('Login to Harbor registry') {
       steps {
         container('buildah') {
           sh 'echo $IMAGE_REGISTRY_CREDS_PSW | buildah login -u $IMAGE_REGISTRY_CREDS_USR --password-stdin $REGISTRY_NAME'
+        }
+      }
+    }
+    stage('Build with Buildah using Dockerfile in provided repo') {
+      steps {
+        container('buildah') {
+          // LOCAVORA - STORAGE_DRIVER=vfs needed if fuse not supported in kernel (lsmod | grep fuse)
+          // IMPORTANT --layers to enable layer build caching
+          //           --from-cache=$CACHE_NAME to use cache from previous builds
+          //           --to-cache=$CACHE_NAME to save cache for future builds
+          // 
+          sh 'cd webserver && nice buildah build --layers --from-cache=$REGISTRY_NAME/$CACHE_NAME --to-cache=$REGISTRY_NAME/$CACHE_NAME -t $REGISTRY_NAME/$IMAGE_NAME:0.1 .'
         }
       }
     }

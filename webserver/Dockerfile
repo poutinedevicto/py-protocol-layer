@@ -51,9 +51,12 @@ COPY supervisord.conf /etc/supervisor.conf
 
 RUN printenv >> /etc/environment
 
+# LOCAVORA - not good pratice to upgrade modules from base image
 RUN restapi/bin/pip3 install pip --upgrade
 RUN restapi/bin/pip3 install pyopenssl --upgrade
 
+# LOCAVORA TODO - we're copying everything here, including the .git repo
+#                 consider copying only needed files or using .dockerignore
 COPY . .
 
 # CMD ["supervisord", "-c", "/etc/supervisor.conf"]
