@@ -14,7 +14,7 @@ spec:
     - name: docker-config-secret
       secret:
         # Secret provient de Vault via un External Secret
-        secretName: harbor-rw-credentials
+        secretName: harbor-beckn-locavora-rw-external-secret
     # Volume pour stocker temporairement le contexte (code source) et l'image de sortie
     #- name: shared-data
     #  emptyDir: {}
