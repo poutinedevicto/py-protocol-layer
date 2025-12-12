@@ -2,8 +2,6 @@
 
 import main.config
 
-# LOCAVORA TEMP - build cache bust
-
 def create_app(config_name):
     from flask import Flask
     from flask_cors import CORS

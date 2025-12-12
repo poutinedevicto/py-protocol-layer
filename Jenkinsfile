@@ -71,8 +71,14 @@ spec:
           // IMPORTANT --layers to enable layer build caching
           //           --from-cache=$CACHE_NAME to use cache from previous builds
           //           --to-cache=$CACHE_NAME to save cache for future builds
-          // 
-          sh 'cd webserver && nice buildah build --layers --retry 0 --cache-from $REGISTRY_NAME/$CACHE_NAME --cache-to $REGISTRY_NAME/$CACHE_NAME -t $REGISTRY_NAME/$IMAGE_NAME:0.1 .'
+          //     --retry 0 should disable retries to pull non-existen cached layers, but does not 
+          //     work as of dec 2025 - see https://www.hostedredmine.com/projects/mutualisation/wiki/JenkinsMaven_dans_k8s#Removing-retries-in-pushing-Image-layer-to-cache
+          
+          sh 'cd webserver && \
+              nice buildah build --layers \
+              --cache-from $REGISTRY_NAME/$CACHE_NAME \
+              --cache-to $REGISTRY_NAME/$CACHE_NAME \
+              -t $REGISTRY_NAME/$IMAGE_NAME:0.1 .'
         }
       }
     }
