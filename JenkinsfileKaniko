@@ -10,15 +10,14 @@ kind: Pod
 metadata:
   name: kaniko-builder
 spec:
-  # 1. Montage du secret pour les identifiants du registre
-  # Remplacez 'regcred' par le nom de votre Secret Docker config
-  # volumes:
-  # - name: kaniko-secret
-  #   secret:
-  #     secretName: regcred
-  # 2. Volume pour stocker temporairement le contexte (code source) et l'image de sortie
-  #- name: shared-data
-  #  emptyDir: {}
+  volumes:
+    - name: docker-config-secret
+      secret:
+        # Secret provient de Vault via un External Secret
+        secretName: harbor-rw-credentials
+    # Volume pour stocker temporairement le contexte (code source) et l'image de sortie
+    #- name: shared-data
+    #  emptyDir: {}
   
   containers:  
   - name: kaniko
@@ -28,25 +27,20 @@ spec:
       - /busybox/sh
       - -c
       - "sleep infinity"
-    args:
-      # Chemin vers le Dockerfile à l'intérieur du volume partagé
-      # - --dockerfile=/workspace/code/Dockerfile
-      # Chemin vers le contexte de construction (le code source cloné)
-      # - --context=dir:///workspace/code/
-      # Destination de l'image à pousser (remplacez par votre registre/nom:tag)
-      #- --destination=monregistre.io/monimage:latest
-      # Fichier d'authentification Docker (poussé via le volume secret)
-      #- --oci-auth-file=/kaniko/.docker/config.json
+    #args:
+    #  # Chemin vers le Dockerfile à l'intérieur du volume partagé
+    #  # - --dockerfile=/workspace/code/Dockerfile
+    #  # Chemin vers le contexte de construction (le code source cloné)
+    #  # - --context=dir:///workspace/code/
+    #  # Destination de l'image à pousser (remplacez par votre registre/nom:tag)
+    #  #- --destination=monregistre.io/monimage:latest
+    #  # Fichier d'authentification Docker (poussé via le volume secret)
+    #  #- --oci-auth-file=/kaniko/.docker/config.json
         
-    #volumeMounts:
-    #  # Montage des identifiants (regcred) pour l'accès au registre
-    #  #- name: kaniko-secret
-    #  #  mountPath: /kaniko/.docker
-    #  #  readOnly: true
-    #  # Montage des données partagées (contexte Git)
-    #  # LOCAVORA - necessaire? Jenkins fait un mount automatique
-    #  #- name: shared-data
-    #  #  mountPath: /workspace
+    volumeMounts:
+      - name: docker-config-secret
+        mountPath: /kaniko/.docker
+        readOnly: true
   restartPolicy: Never
 '''   
     }
