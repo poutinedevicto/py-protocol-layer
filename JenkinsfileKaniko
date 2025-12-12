@@ -1,0 +1,129 @@
+pipeline {
+  agent {
+    // LOCAVORA_TODO agent also defined in other Jenkinsfile 
+    kubernetes {
+      label 'jenkins-agent-kaniko-remote-harbor'
+      idleMinutes 60 // Keep the Pod alive for 60 minutes after the build
+      yaml '''
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kaniko-builder
+spec:
+  # 1. Montage du secret pour les identifiants du registre
+  # Remplacez 'regcred' par le nom de votre Secret Docker config
+  # volumes:
+  # - name: kaniko-secret
+  #   secret:
+  #     secretName: regcred
+  # 2. Volume pour stocker temporairement le contexte (code source) et l'image de sortie
+  #- name: shared-data
+  #  emptyDir: {}
+  
+  containers:  
+  - name: kaniko
+    # 'latest' aussi disponible mais 'debug' init. parce que sh dispo
+    image: martizih/kaniko:debug
+    command:
+      - /busybox/sh
+      - -c
+      - "sleep infinity"
+    args:
+      # Chemin vers le Dockerfile à l'intérieur du volume partagé
+      # - --dockerfile=/workspace/code/Dockerfile
+      # Chemin vers le contexte de construction (le code source cloné)
+      # - --context=dir:///workspace/code/
+      # Destination de l'image à pousser (remplacez par votre registre/nom:tag)
+      #- --destination=monregistre.io/monimage:latest
+      # Fichier d'authentification Docker (poussé via le volume secret)
+      #- --oci-auth-file=/kaniko/.docker/config.json
+        
+    volumeMounts:
+      # Montage des identifiants (regcred) pour l'accès au registre
+      #- name: kaniko-secret
+      #  mountPath: /kaniko/.docker
+      #  readOnly: true
+      # Montage des données partagées (contexte Git)
+      # LOCAVORA - necessaire? Jenkins fait un mount automatique
+      #- name: shared-data
+      #  mountPath: /workspace
+  restartPolicy: Never
+'''   
+    }
+  }
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    durabilityHint('PERFORMANCE_OPTIMIZED')
+    disableConcurrentBuilds()
+  }
+  environment {
+    // Jenkins UI -> Manage Jenkins -> Credentials
+    IMAGE_REGISTRY_CREDS=credentials('harbor-locavora-readwrite')
+    REGISTRY_NAME = 'harbor.beckn.locavora.org'
+    IMAGE_NAME = 'locavora-public/ondc-buyer-app-py-protocol'
+    CACHE_NAME = 'locavora/dockerfile-build-cache'
+  }
+  stages {
+  
+    // LOCAVORA DELETE_ME - Dockerfile is a subdir - using cd "" && 
+    // stage('Buildah build using webserver subdirectory') {
+    //   steps {
+    //       dir('webserver') { 
+    //           echo "Changed directory to webserver"
+    //       }
+    //   }
+    // }
+
+    // LOCAVORA - attention on doit utiliser les apos (') pour que les variables d'environnement ne soient pas interprétées
+    //  Warning: A secret was passed to "sh" using Groovy String interpolation, which is insecure.
+		//  Affected argument(s) used the following variable(s): [xxx]
+	  //  See https://jenkins.io/redirect/groovy-string-interpolation for details.
+    stage('Login to Harbor registry') {
+      steps {
+        container('buildah') {
+          sh 'echo $IMAGE_REGISTRY_CREDS_PSW | buildah login -u $IMAGE_REGISTRY_CREDS_USR --password-stdin $REGISTRY_NAME'
+        }
+      }
+    }
+    stage('Build with Buildah using Dockerfile in provided repo') {
+      steps {
+        container('buildah') {
+          // LOCAVORA - STORAGE_DRIVER=vfs needed if fuse not supported in kernel (lsmod | grep fuse)
+          // IMPORTANT --layers to enable layer build caching
+          //           --from-cache=$CACHE_NAME to use cache from previous builds
+          //           --to-cache=$CACHE_NAME to save cache for future builds
+          //     --retry 0 should disable retries to pull non-existen cached layers, but does not 
+          //     work as of dec 2025 - see https://www.hostedredmine.com/projects/mutualisation/wiki/JenkinsMaven_dans_k8s#Removing-retries-in-pushing-Image-layer-to-cache
+          
+          sh 'cd webserver && \
+              nice buildah build --layers \
+              --cache-from $REGISTRY_NAME/$CACHE_NAME \
+              --cache-to $REGISTRY_NAME/$CACHE_NAME \
+              -t $REGISTRY_NAME/$IMAGE_NAME:0.1 .'
+        }
+      }
+    }
+    stage('tag image') {
+      steps {
+        container('buildah') {
+          sh 'buildah tag $REGISTRY_NAME/$IMAGE_NAME:0.1 $REGISTRY_NAME/$IMAGE_NAME:latest'
+        }
+      }
+    }
+    stage('push image') {
+      steps {
+        container('buildah') {
+          sh 'buildah push $REGISTRY_NAME/$IMAGE_NAME:0.1'
+          sh 'buildah push $REGISTRY_NAME/$IMAGE_NAME:latest'
+        }
+      }
+    }
+  }
+  post {
+    always {
+      container('buildah') {
+        sh 'buildah logout $REGISTRY_NAME'
+      }
+    }
+  }
+}
