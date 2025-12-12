@@ -2,7 +2,6 @@
 
 import main.config
 
-# LOCAVORA TEMP test cached build
 
 def create_app(config_name):
     from flask import Flask
