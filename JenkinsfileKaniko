@@ -38,15 +38,15 @@ spec:
       # Fichier d'authentification Docker (poussé via le volume secret)
       #- --oci-auth-file=/kaniko/.docker/config.json
         
-    volumeMounts:
-      # Montage des identifiants (regcred) pour l'accès au registre
-      #- name: kaniko-secret
-      #  mountPath: /kaniko/.docker
-      #  readOnly: true
-      # Montage des données partagées (contexte Git)
-      # LOCAVORA - necessaire? Jenkins fait un mount automatique
-      #- name: shared-data
-      #  mountPath: /workspace
+    #volumeMounts:
+    #  # Montage des identifiants (regcred) pour l'accès au registre
+    #  #- name: kaniko-secret
+    #  #  mountPath: /kaniko/.docker
+    #  #  readOnly: true
+    #  # Montage des données partagées (contexte Git)
+    #  # LOCAVORA - necessaire? Jenkins fait un mount automatique
+    #  #- name: shared-data
+    #  #  mountPath: /workspace
   restartPolicy: Never
 '''   
     }
