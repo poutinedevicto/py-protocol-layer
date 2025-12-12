@@ -72,7 +72,7 @@ spec:
           //           --from-cache=$CACHE_NAME to use cache from previous builds
           //           --to-cache=$CACHE_NAME to save cache for future builds
           // 
-          sh 'cd webserver && nice buildah build --layers --cache-from $REGISTRY_NAME/$CACHE_NAME --cache-to $REGISTRY_NAME/$CACHE_NAME -t $REGISTRY_NAME/$IMAGE_NAME:0.1 .'
+          sh 'cd webserver && nice buildah build --layers --retry 0 --cache-from $REGISTRY_NAME/$CACHE_NAME --cache-to $REGISTRY_NAME/$CACHE_NAME -t $REGISTRY_NAME/$IMAGE_NAME:0.1 .'
         }
       }
     }
