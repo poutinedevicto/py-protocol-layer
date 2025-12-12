@@ -44,7 +44,9 @@ spec:
 
     resources:
       requests:
-        ephemeral-storage: 10Gi
+        # LOCAVORA - max total ephemeral-storage per node under GKE 
+        #            is 10Gi, and the other container (jnlp) requests 1Gi 
+        ephemeral-storage: 9Gi
 
   restartPolicy: Never
 '''   
