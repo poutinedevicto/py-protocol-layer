@@ -23,19 +23,12 @@ spec:
   - name: kaniko
     # 'latest' aussi disponible mais 'debug' init. parce que sh dispo
     image: martizih/kaniko:debug
+    # LOCAVORA - on execute sleep infinity to keep the container running
+    # les steps "container('kaniko')" vont exec des commandes dans ce container
     command:
       - /busybox/sh
       - -c
       - "sleep infinity"
-    #args:
-    #  # Chemin vers le Dockerfile à l'intérieur du volume partagé
-    #  # - --dockerfile=/workspace/code/Dockerfile
-    #  # Chemin vers le contexte de construction (le code source cloné)
-    #  # - --context=dir:///workspace/code/
-    #  # Destination de l'image à pousser (remplacez par votre registre/nom:tag)
-    #  #- --destination=monregistre.io/monimage:latest
-    #  # Fichier d'authentification Docker (poussé via le volume secret)
-    #  #- --oci-auth-file=/kaniko/.docker/config.json
         
     volumeMounts:
       - name: docker-config-secret
