@@ -11,12 +11,10 @@ RUN apt-get update && \
      build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install virtualenv using pip
-RUN pip install virtualenv
 
 WORKDIR /app
 
-RUN virtualenv -p python3.7 cronenv
+RUN python3.7 -m venv cronenv
 
 COPY cron_requirements.txt .
 
