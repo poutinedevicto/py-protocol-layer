@@ -17,7 +17,6 @@ RUN pip install virtualenv
 # LOCAVORA END
 
 RUN mkdir -p /dataorc/app
-# update pip
 
 ENV SRC /dataorc/app
 
