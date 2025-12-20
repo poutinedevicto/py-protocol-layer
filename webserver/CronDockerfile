@@ -3,7 +3,9 @@
 # FROM python:3.11
 FROM python:3.7-slim
 
-# LOCAVORA added sinon erreurs pip
+# LOCAVORA update et install pip added sinon erreurs pip
+# disable any prompts during package installation
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
      python3-pip \
