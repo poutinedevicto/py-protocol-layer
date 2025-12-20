@@ -1,7 +1,9 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11
+# LOCAVORA - slim version
+FROM python:3.11-slim
 COPY cron_requirements.txt /
 RUN pip3 install -r /cron_requirements.txt
+# LOCAVORA TODO - .dockerignore
 COPY . /app
 WORKDIR /app
 ENTRYPOINT ["python3", "-m", "main.cron.search_by_city"]
