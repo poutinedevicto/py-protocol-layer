@@ -1,3 +1,4 @@
+// LOCAVORA DELETE_ME - older Jenkinsfile using buildah instead of kaniko
 pipeline {
   agent {
     // LOCAVORA_TODO buildah agent also defined in beckn-registry Jenkinsfile 

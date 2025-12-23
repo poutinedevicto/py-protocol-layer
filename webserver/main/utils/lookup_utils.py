@@ -13,8 +13,14 @@ def fetch_subscriber_url_from_lookup(request_type, subscriber_id=None, domain=No
     payload.update({"domain": domain}) if domain and domain != '*' else None
     payload.update({"subscriber_id": subscriber_id}) if subscriber_id else None
     updated_payload = format_registry_request_for_pre_prod(payload) if os.getenv("ENV") == "pre_prod" else payload
-    response, status_code = lookup_call(f"{get_config_by_name('REGISTRY_BASE_URL')}/v2.0/lookup",
-                                        payload=updated_payload)
+    # LOCAVORA - Beckn ONIX registry expects /subscribers/lookup but here using /v2.0/lookup
+    # WAS
+    #response, status_code = lookup_call(f"{get_config_by_name('REGISTRY_BASE_URL')}/v2.0/lookup",
+    #                                    payload=updated_payload)
+    response, status_code = lookup_call(
+        f"{get_config_by_name('REGISTRY_BASE_URL')}/subscribers/lookup",
+        payload=updated_payload)
+
     if status_code == 200 and len(response) > 0:
         if response[0].get('network_participant'):
             subscriber_id = response[0]['subscriber_id']
@@ -23,7 +29,11 @@ def fetch_subscriber_url_from_lookup(request_type, subscriber_id=None, domain=No
         else:
             return response[0]['subscriber_url']
     else:
-        return get_config_by_name('REGISTRY_BASE_URL')
+        # LOCAVORA WAS:
+        # return get_config_by_name('REGISTRY_BASE_URL')
+        log_error(f"Couldn't fetch subscriber_url for {payload} \
+                    using registry {get_config_by_name('REGISTRY_BASE_URL')}")
+        raise Exception("Couldn't fetch subscriber_url from registry")
 
 
 def get_bpp_public_key_from_header(auth_header, domain):
