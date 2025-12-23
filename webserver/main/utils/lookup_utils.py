@@ -11,7 +11,7 @@ def fetch_subscriber_url_from_lookup(request_type, subscriber_id=None, domain=No
     subscriber_type = SubscriberType.BG.name if request_type == 'search' else SubscriberType.BPP.name
     payload = {"type": subscriber_type, "country": get_config_by_name('COUNTRY_CODE')}
     payload.update({"domain": domain}) if domain and domain != '*' else None
-    payload.update({"subscriber_id": subscriber_id}) if subscriber_id else None
+    payload.update({"subscriber_id": subscriber_id}) if subscriber_ielse None
     updated_payload = format_registry_request_for_pre_prod(payload) if os.getenv("ENV") == "pre_prod" else payload
     # LOCAVORA - Beckn ONIX registry expects /subscribers/lookup but here using /v2.0/lookup
     # WAS
@@ -32,7 +32,8 @@ def fetch_subscriber_url_from_lookup(request_type, subscriber_id=None, domain=No
         # LOCAVORA WAS:
         # return get_config_by_name('REGISTRY_BASE_URL')
         log_error(f"Couldn't fetch subscriber_url for {payload} \
-                    using registry {get_config_by_name('REGISTRY_BASE_URL')}")
+                    using registry {get_config_by_name('REGISTRY_BASE_URL')} \
+                        response: {response} status_code: {status_code}")
         raise Exception("Couldn't fetch subscriber_url from registry")
 
 
