@@ -93,6 +93,8 @@ def make_http_requests_for_search_by_city(search_type: SearchType, domains=None,
                     "action": "search",
                     "country": "IND",
                     "city": c,
+                    # LOCAVORA HARDCODED
+                    "version": "1.1.0",
                     "core_version": "1.2.0",
                     "bap_id": get_config_by_name("BAP_ID"),
                     "bap_uri": get_config_by_name("BAP_URL"),

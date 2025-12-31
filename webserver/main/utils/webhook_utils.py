@@ -171,6 +171,7 @@ def lookup_call(endpoint, payload, headers=None):
 def make_request_to_no_dashboard(payload, response=False):
     action = payload.get("context", {}).get("action")
     dashboard_webhook_endpoint = get_config_by_name('NO_DASHBOARD_ENDPOINT')
+    # LOCAVORA TODO - allow to disable analytics by not setting endpoint
     if action is None:
         log("No action found hence not making request to NO Dashboard!")
         return
